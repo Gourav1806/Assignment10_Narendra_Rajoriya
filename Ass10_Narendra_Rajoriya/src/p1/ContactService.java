@@ -2,7 +2,7 @@ package p1;
 import java.io.*;
 import java.util.*;
 
-class Contact{
+class Contact implements Serializable{
 	private int  contactId;
 	private String contactName;
 	private String email;
@@ -157,6 +157,32 @@ public class ContactService{
 		}
 		
 	}
+	static void serializeContactDetails(List<Contact> contacts,String fileName) {
+		
+		try {
+			File f = new File(fileName);
+			if(f.exists()) {
+				f.createNewFile();
+				System.out.println("done");
+			}
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
+			oos.writeObject(contacts);
+			oos.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	static List<Contact> deserializeContactDetails(String fileName){
+		List<Contact> ls = new ArrayList<Contact>();
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
+			ls=(ArrayList<Contact>)ois.readObject();
+			ois.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ls;
+	}
 	public static void main(String[] args) {
 		contacts = new ArrayList<Contact>();
 		List<String> contactNo = new ArrayList<String>();
@@ -213,7 +239,13 @@ public class ContactService{
 		
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		readContactFromFile("C:\\Users\\NARENDRA\\git\\Assignment10_Narendra_Rajoriya\\Ass10_Narendra_Rajoriya\\TextFiles\\Contacts.txt", contacts);
-		display(contacts);
+		//display(contacts);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		serializeContactDetails(contacts, "C:\\Users\\NARENDRA\\git\\Assignment10_Narendra_Rajoriya\\Ass10_Narendra_Rajoriya\\TextFiles\\serialize_contacts.txt");
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		List<Contact> ls=new ArrayList<Contact>();
+		ls=deserializeContactDetails("C:\\Users\\NARENDRA\\git\\Assignment10_Narendra_Rajoriya\\Ass10_Narendra_Rajoriya\\TextFiles\\serialize_contacts.txt");
+		display(ls);
 	}
 }
 
