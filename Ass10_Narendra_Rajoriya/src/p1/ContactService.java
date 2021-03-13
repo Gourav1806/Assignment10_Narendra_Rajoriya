@@ -36,10 +36,18 @@ class Contact{
 	}
 	
 }
-
+class ContactNotFoundException extends Exception{
+	ContactNotFoundException(){
+		
+	}
+	ContactNotFoundException(String message){
+		super(message);
+	}
+}
 public class ContactService{
 	static List<Contact> contacts;
 	static void display(List<Contact> contacts) {
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		Iterator it = contacts.iterator();
 		while(it.hasNext()) {
 			System.out.println(it.next());
@@ -47,6 +55,21 @@ public class ContactService{
 	}
 	static void addContact(Contact contact,List<Contact> contacts) {
 		contacts.add(contact);
+	}
+	static void removeContact(String name,List<Contact> contacts) throws ContactNotFoundException{
+		Iterator it = contacts.iterator();
+		int t = 0;
+		while(it.hasNext()) {
+			Contact con = (Contact)it.next();
+			String n1 = con.getContactName();
+			if(n1.equals(name)) {
+				t=1;
+				contacts.remove(con);
+				break;
+			}
+		}
+		if(t==0)
+			throw new ContactNotFoundException("there is no contact with entered name..");
 	}
 	public static void main(String[] args) {
 		contacts = new ArrayList<Contact>();
@@ -58,6 +81,13 @@ public class ContactService{
 		contact.setContactNumber(Arrays.asList(contactNo));
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		addContact(contact,contacts);
+		display(contacts);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		try {
+			removeContact("Sohan",contacts);
+		}catch(ContactNotFoundException e) {
+			e.printStackTrace();
+		}
 		display(contacts);
 	}
 }
