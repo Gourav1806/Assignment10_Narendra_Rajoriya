@@ -1,7 +1,7 @@
 package p1;
 import java.io.*;
 import java.util.*;
-
+import java.sql.*;
 class Contact implements Serializable{
 	private int  contactId;
 	private String contactName;
@@ -183,6 +183,40 @@ public class ContactService{
 		}
 		return ls;
 	}
+	static Set<Contact> populateContactFromDb(){
+		Set<Contact> set = new HashSet<Contact>();
+		Contact c ;
+		List<String> ls ;
+		try {
+		Class.forName("com.mysql.jdbc.Driver");
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/contactdb","root","1234");
+		PreparedStatement ps = con.prepareStatement("select * from contact_tbl");
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()) {
+			c=new Contact();
+			c.setContactId(rs.getInt(1));
+			c.setContactName(rs.getString(2));
+			c.setEmail(rs.getString(3));
+			ls=new ArrayList<String>();
+			String s = rs.getString(4);
+			if(!(s==null)) {
+				String[] cno = s.split(",");
+				for(int i=0;i<cno.length;i++) {
+					ls.add(cno[i]);
+				}
+			}
+			c.setContactNumber(ls);
+			set.add(c);	
+		}
+		}catch(ClassNotFoundException|SQLException e) {
+			e.printStackTrace();
+		}
+		return set;
+	}
+	static Boolean addContacts(List<Contact> existingContact,Set<Contact> newContacts){
+		existingContact.addAll(newContacts);
+		return null;
+	}
 	public static void main(String[] args) {
 		contacts = new ArrayList<Contact>();
 		List<String> contactNo = new ArrayList<String>();
@@ -246,6 +280,14 @@ public class ContactService{
 		List<Contact> ls=new ArrayList<Contact>();
 		ls=deserializeContactDetails("C:\\Users\\NARENDRA\\git\\Assignment10_Narendra_Rajoriya\\Ass10_Narendra_Rajoriya\\TextFiles\\serialize_contacts.txt");
 		display(ls);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		Set<Contact> set = populateContactFromDb();
+		for(Contact c : set)
+			System.out.println(c);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		addContacts(contacts,set);
+		display(contacts);
+		
 	}
 }
 
