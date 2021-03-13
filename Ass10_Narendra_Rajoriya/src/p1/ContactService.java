@@ -71,6 +71,22 @@ public class ContactService{
 		if(t==0)
 			throw new ContactNotFoundException("there is no contact with entered name..");
 	}
+	static Contact searchContactByName(String name,List<Contact> contacts)throws ContactNotFoundException{
+		Iterator it = contacts.iterator();
+		Contact con=new Contact();
+		int t = 0;
+		while(it.hasNext()) {
+			con = (Contact)it.next();
+			String n1 = con.getContactName();
+			if(n1.equals(name)) {
+				t=1;
+				break;
+			}
+		}
+		if(t==0)
+			throw new ContactNotFoundException("there is no contact with entered name..");
+		return con;
+	}
 	public static void main(String[] args) {
 		contacts = new ArrayList<Contact>();
 		Contact contact = new Contact();
@@ -81,14 +97,32 @@ public class ContactService{
 		contact.setContactNumber(Arrays.asList(contactNo));
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		addContact(contact,contacts);
+		contact=new Contact();
+		contact.setContactId(6);
+		contact.setContactName("Gohan");
+		contact.setEmail("Gohan@gmail.com");
+		String contactN[] = {"6754903212","4567891234"};
+		contact.setContactNumber(Arrays.asList(contactN));
+		addContact(contact,contacts);
 		display(contacts);
+		
+//		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+//		try {
+//			removeContact("Sohan",contacts);
+//		}catch(ContactNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		display(contacts);
+//		
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		try {
-			removeContact("Sohan",contacts);
+			Contact con = searchContactByName("Gohan",contacts);
+			System.out.println(con);
 		}catch(ContactNotFoundException e) {
 			e.printStackTrace();
 		}
-		display(contacts);
+		
+		
 	}
 }
 
